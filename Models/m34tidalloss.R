@@ -1,10 +1,11 @@
-m22expdolphin <- nimbleCode({
+m34tidalloss <- nimbleCode({
   # Priors (or fixed vals for things that may eventually be estimated)
-  alpha ~ dbeta(1, 5)
-  beta ~ T(dlnorm(5.5, .5), 0, 10000) # truncated 
-  xinit ~ T(dnorm(100, 50), 0, 1000) # truncated to not be negative
-  theta ~ T(dnorm(0.025,1), 0, 10) # truncated to not be negative
-  psi ~ dunif(0.001,10) # non-negative
+  alpha ~ dunif(0,1)
+  beta ~ dunif(1,10000)
+  xinit ~ dunif(1,10000)
+  theta ~ dunif(0.01,10)
+  gamma ~ dnorm(0,10)
+  
   
   # Process model
   
@@ -12,7 +13,7 @@ m22expdolphin <- nimbleCode({
   x[1] <- xinit
   for (t in 2:nTSo){
     # x is the expected (unobserved) concentration of DNA
-    x[t] <- (x[t-1]+beta*exp(psi*N_dolphins[t]))*alpha
+    x[t] <- (x[t-1]+beta)*(alpha+gamma*tide_height_frac[t])
   }
   
   # Observation model
