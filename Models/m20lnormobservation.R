@@ -1,9 +1,10 @@
-m25randomloss <- nimbleCode({
+m20lnormobservation <- nimbleCode({
   # Priors (or fixed vals for things that may eventually be estimated)
-  #alpha ~ dbeta(1, 5)
+  alpha ~ dbeta(1, 5)
   beta ~ T(dlnorm(5.5, .5), 0, 10000) # truncated 
   xinit ~ T(dnorm(100, 50), 0, 1000) # truncated to not be negative
   theta ~ T(dnorm(0.025,1), 0, 10) # truncated to not be negative
+
   
   
   # Process model
@@ -12,7 +13,7 @@ m25randomloss <- nimbleCode({
   x[1] <- xinit
   for (t in 2:nTSo){
     # x is the expected (unobserved) concentration of DNA
-    x[t] <- (x[t-1]+beta)*alpha[t]
+    x[t] <- (x[t-1]+beta)*alpha
   }
   
   # Observation model
@@ -23,7 +24,6 @@ m25randomloss <- nimbleCode({
     # y are the observed concentrations of DNA
     # y[t] ~ dnorm(mean=x[t],sd=sigma[t])
     y[t] ~ dlnorm(mean=log(x[t]),sd=sd_log_x[t])
-    alpha[t] ~ dunif(0,1)
   }
   
 })
