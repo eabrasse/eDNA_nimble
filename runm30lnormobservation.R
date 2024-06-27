@@ -2,11 +2,10 @@
 
 library(nimble)
 
-source("./Models/m23mixeddolphin.R")
+source("./Models/m30lnormobservation.R")
 
-moddata <- read.csv("../../../data/dolphin_tide_minutefreq.csv")
-# moddata <- read.csv("../../../data/ESP_box_model_terms_ESPtimesteps.csv")
-obsdata <- read.csv("../../../data/ESP_timestamps.csv")
+moddata <- read.csv("./Data/ESP_box_model_terms_ESPtimesteps.csv")
+obsdata <- read.csv("./Data/ESP_timestamps_mLseawater.csv")
 
 nimbleData <- list(
   y = obsdata$PB_quantity_mean
@@ -15,22 +14,18 @@ nimbleData <- list(
 
 t0 <- c()
 t1 <- c()
-N_dolphins <- c()
 for (t in 1:nrow(obsdata)) {
-  t0[t] <- min(which(moddata$timestamp > obsdata$timestamp_0[t]))
-  t1[t] <- max(which(moddata$timestamp < obsdata$timestamp_1[t]))
-  N_dolphins[t] <- mean(moddata$ndolphin_net[t0[t]:t1[t]])
+  t0[t] <- min(which(moddata$Timestamp..sec. > obsdata$timestamp_0[t]))
+  t1[t] <- max(which(moddata$Timestamp..sec. < obsdata$timestamp_1[t]))
 }
 
-N_dolphins_max_R = 0.999/max(N_dolphins) # "_R" for recipricol 
 
 nimbleConsts <- list(
   #t0 = t0,
   #t1 = t1,
   #nTSm = nrow(moddata),
-  nTSo = nrow(obsdata),
-  N_dolphins = N_dolphins,
-  N_dolphins_max_R = N_dolphins_max_R
+  nTSo = nrow(obsdata)
+  #N_dolphins = moddata$ndolphin_net,
   #Mod_ts = moddata$timestamp
   #theta = 0.27
 )
@@ -38,17 +33,14 @@ nimbleConsts <- list(
 nimbleInits <- list(alpha = 0.2,
                     beta = 75,
                     xinit = 100,
-                    x = rep(1, nrow(obsdata)),
+                    x = rep(1, nrow(moddata)),
                     sigma = rep(1, nrow(obsdata)),
-                    z = rep(0, nrow(obsdata)),
-                    theta = 1.0,
-                    phi = 10,
-                    p=N_dolphins_max_R
+                    theta = 1.0
 )
 
-nimbleParams <- list("x", "alpha", "beta", "xinit", "sigma","sd_log_x","theta","z","p","phi")
+nimbleParams <- list("x", "alpha", "beta", "xinit", "sigma","sd_log_x","theta")
 
-model <- nimbleModel(code = m23mixeddolphin,
+model <- nimbleModel(code = m20lnormobservation,
                      data = nimbleData,
                      constants = nimbleConsts,
                      inits = nimbleInits,
@@ -61,18 +53,15 @@ nimbleOut <- nimbleMCMC(model,
                         thin = 100, niter = 1000000, nburnin = 750000, nchains = 4,
                         summary = TRUE,WAIC = TRUE)
 
-save(nimbleOut, file = "./Results/nimbleOut_m23mixeddolphin.RData")
+save(nimbleOut, file = "./Results/nimbleOut_m20lnormobservation.RData")
 
-load("./Results/nimbleOut_m23mixeddolphin.RData")
+load("./Results/nimbleOut_m20lnormobservation.RData")
 
 nimbleAC <- as.data.frame(nimbleOut$summary$all.chains)
 
-message('theta = ',nimbleAC['theta',1])
-message('alpha = ',nimbleAC['alpha',1])
-message('beta = ',nimbleAC['beta',1])
-message('p = ',nimbleAC['p',1])
-message('phi = ',nimbleAC['phi',1])
-
+message('alpha = ',nimbleAC[grep('alpha',rownames(nimbleAC)),1])
+message('beta = ',nimbleAC[grep('beta',rownames(nimbleAC)),1])
+message('theta = ',nimbleAC[grep('theta',rownames(nimbleAC)),1])
 
 x = (obsdata$timestamp_0-obsdata$timestamp_0[1])/3600
 
@@ -98,4 +87,5 @@ df <- data.frame (
   model = nimbleAC[grep('^x\\[',rownames(nimbleAC)),1],
   sigma = sd
 )
-write.csv(df, "./Results/m23mixeddolphin_plotting.csv")
+write.csv(df, "./Results/m20lnormobservation_plotting.csv")
+
