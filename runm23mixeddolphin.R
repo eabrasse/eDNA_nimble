@@ -63,7 +63,7 @@ nimbleOut <- nimbleMCMC(model,
 
 save(nimbleOut, file = "./Results/nimbleOut_m23mixeddolphin.RData")
 
-# load("./Results/nimbleOut_m23mixeddolphin.RData")
+load("./Results/nimbleOut_m23mixeddolphin.RData")
 
 nimbleAC <- as.data.frame(nimbleOut$summary$all.chains)
 
@@ -87,7 +87,15 @@ ymin = y-sd
 ymin[ymin<=0] <- 1
 segments(x,ymin,x,yplus,col='red')
 
-plot(obsdata$timestamp_1,nimbleData$y,col='blue',lty=1,ylab='DNA conc (copies/μL)',xlab='Timestamp')
-points(obsdata$timestamp_1,nimbleAC[grep('x_s\\[',rownames(nimbleAC)),1],col='red',lty=1)
-lines(nimbleConsts$Mod_ts,nimbleAC[grep('x\\[',rownames(nimbleAC)),1],col='red',lty=1)
-segments(x, y-sd,x,y+sd,col='red')
+#plot(obsdata$timestamp_1,nimbleData$y,col='blue',lty=1,ylab='DNA conc (copies/μL)',xlab='Timestamp')
+#points(obsdata$timestamp_1,nimbleAC[grep('x_s\\[',rownames(nimbleAC)),1],col='red',lty=1)
+#lines(nimbleConsts$Mod_ts,nimbleAC[grep('x\\[',rownames(nimbleAC)),1],col='red',lty=1)
+#segments(x, y-sd,x,y+sd,col='red')
+
+df <- data.frame (
+  hours_since_ESP_start = x,
+  ESP_DNA_conc = nimbleData$y,
+  model = nimbleAC[grep('^x\\[',rownames(nimbleAC)),1],
+  sigma = sd
+)
+write.csv(df, "./Results/m23mixeddolphin_plotting.csv")
