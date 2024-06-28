@@ -21,7 +21,7 @@ m33mixeddolphin <- nimbleCode({
   x[1] <- xinit
   for (t in 2:nTSo){
     # x is the expected (unobserved) concentration of DNA
-    x[t] <- (x[t-1]+N_dolphins[t]*beta*(1+phi*z[t]))*alpha
+    x[t] <- alpha*x[t-1]+N_dolphins[t]*beta*(1+phi*z[t])
   }
   
   # Observation model

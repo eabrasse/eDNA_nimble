@@ -13,7 +13,7 @@ m34tidalloss <- nimbleCode({
   x[1] <- xinit
   for (t in 2:nTSo){
     # x is the expected (unobserved) concentration of DNA
-    x[t] <- (x[t-1]+beta)*(alpha+gamma*tide_height_frac[t])
+    x[t] <- (alpha+gamma*tide_height_frac[t])*x[t-1]+beta
   }
   
   # Observation model

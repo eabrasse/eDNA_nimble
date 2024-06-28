@@ -8,7 +8,7 @@ moddata <- read.csv("./Data/ESP_box_model_terms_ESPtimesteps.csv")
 obsdata <- read.csv("./Data/ESP_timestamps_mLseawater.csv")
 
 nimbleData <- list(
-  y = obsdata$PB_quantity_mean
+  y = obsdata$copies_per_mLseawater
   
 )
 
@@ -53,9 +53,9 @@ nimbleOut <- nimbleMCMC(model,
                         thin = 100, niter = 1000000, nburnin = 750000, nchains = 4,
                         summary = TRUE,WAIC = TRUE)
 
-save(nimbleOut, file = "./Results/nimbleOut_m20lnormobservation.RData")
+save(nimbleOut, file = "./Results/nimbleOut_m30lnormobservation.RData")
 
-load("./Results/nimbleOut_m20lnormobservation.RData")
+load("./Results/nimbleOut_m30lnormobservation.RData")
 
 nimbleAC <- as.data.frame(nimbleOut$summary$all.chains)
 
@@ -87,5 +87,5 @@ df <- data.frame (
   model = nimbleAC[grep('^x\\[',rownames(nimbleAC)),1],
   sigma = sd
 )
-write.csv(df, "./Results/m20lnormobservation_plotting.csv")
+write.csv(df, "./Results/m30lnormobservation_plotting.csv")
 
