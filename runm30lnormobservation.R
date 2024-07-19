@@ -30,12 +30,20 @@ nimbleConsts <- list(
   #theta = 0.27
 )
 
-nimbleInits <- list(alpha = 0.2,
-                    beta = 75,
-                    xinit = 100,
-                    x = rep(1, nrow(moddata)),
-                    sigma = rep(1, nrow(obsdata)),
-                    theta = 1.0
+#nimbleInits <- list(alpha = 0.2,
+#                    beta = 75,
+#                    xinit = 100,
+#                    x = rep(1, nrow(moddata)),
+#                    sigma = rep(1, nrow(obsdata)),
+#                    theta = 1.0
+#)
+
+nimbleInits <- list(alpha = NA,
+                    beta = NA,
+                    xinit = NA,
+                    x = rep(NA, nrow(moddata)),
+                    sigma = rep(NA, nrow(obsdata)),
+                    theta = NA
 )
 
 nimbleParams <- list("x", "alpha", "beta", "xinit", "sigma","sd_log_x","theta")

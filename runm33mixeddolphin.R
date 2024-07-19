@@ -34,6 +34,16 @@ nimbleConsts <- list(
   #theta = 0.27
 )
 
+#nimbleInits <- list(alpha = NA, #
+#                    beta = NA,
+#                    xinit = NA,
+#                    #                    x = rep(1, nrow(obsdata)),
+#                    #                    sigma = rep(1, nrow(obsdata)),
+#                    theta = NA,
+#                    phi = NA,
+#                    p=NA
+#)
+
 nimbleInits <- list(alpha = 0.5,
                     beta = 1,
                     xinit = 100,

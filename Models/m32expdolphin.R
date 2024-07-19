@@ -3,7 +3,8 @@ m32expdolphin <- nimbleCode({
   alpha ~ dunif(0,1)
   beta ~ dunif(1,10000)
   xinit ~ dunif(1,10000)
-  theta ~ dunif(0.01,10)
+  #theta ~ dunif(0.01,10)
+  theta ~ T(dnorm(0.025,1), 0, 10)
   psi ~ dunif(0.001,10) # non-negative
   
   # Process model

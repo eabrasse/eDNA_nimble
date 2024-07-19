@@ -3,9 +3,12 @@ m33mixeddolphin <- nimbleCode({
   alpha ~ dunif(0,1)
   beta ~ dunif(1,10000)
   xinit ~ dunif(1,10000)
-  theta ~ dunif(0.01,10)
-  phi ~ dunif(10,10000) # non-negative
-  p ~ dunif(0,N_dolphins_max_R) # constrained so p*max(N_dolphins) cannot exceed 1
+  #theta ~ dunif(0.01,10)
+  theta ~ T(dnorm(0.025,1), 0, 10)
+  phi ~ T(dlnorm(5,5),10,10000) # non-negative
+  #p ~ dunif(0,N_dolphins_max_R) # constrained so p*max(N_dolphins) cannot exceed 1
+  p.beta ~ dbeta(5,5)
+  p <- p.beta*N_dolphins_max_R
   
   
   # Process model
